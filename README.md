@@ -1,0 +1,73 @@
+# rag-service-demo
+
+A minimal RAG (Retrieval-Augmented Generation) API that lets you ask questions about your PDF documents. Built with FastAPI, LangChain, ChromaDB, and Google Gemini.
+
+## How it works
+
+1. PDFs are loaded, split into chunks, and embedded into a local ChromaDB vector store.
+2. On each `/ask` request the top-3 relevant chunks are retrieved and passed as context to Gemini, which generates a grounded answer.
+
+## Setup
+
+**Prerequisites:** Python 3.13+, [uv](https://docs.astral.sh/uv/), a Google AI API key.
+
+```bash
+uv sync
+cp .env.example .env   # then add your GOOGLE_API_KEY
+```
+
+`.env` file:
+
+```
+GOOGLE_API_KEY=your_key_here
+```
+
+## Ingest a PDF
+
+```python
+from rag.pipeline import ingest_pdf
+
+ingest_pdf("path/to/document.pdf")
+```
+
+## Run the server
+
+```bash
+uv run uvicorn app:app --reload
+```
+
+## API
+
+### `GET /health`
+
+```json
+{"status": "ok"}
+```
+
+### `POST /ask`
+
+**Request**
+
+```json
+{"question": "What is the notice period?"}
+```
+
+**Response**
+
+```json
+{
+  "answer": "The notice period is 30 days...",
+  "sources": [
+    {"page": 3, "snippet": "...relevant excerpt..."}
+  ]
+}
+```
+
+## Configuration
+
+| Variable | Default | Description |
+|---|---|---|
+| `GOOGLE_API_KEY` | — | Required. Google AI API key. |
+| `CHROMA_DIR` | `./chroma_db` | Directory for the ChromaDB vector store. |
+| `EMBEDDING_MODEL` | `gemini-embedding-2-preview` | Gemini embedding model. |
+| `LLM_MODEL` | `gemini-2.5-flash-lite` | Gemini chat model. |
