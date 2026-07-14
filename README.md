@@ -49,16 +49,16 @@ uv run uvicorn app:app --reload
 **Request**
 
 ```json
-{"question": "What is the notice period?"}
+{"question": "What programming languages does the candidate know?"}
 ```
 
 **Response**
 
 ```json
 {
-  "answer": "The notice period is 30 days...",
+  "answer": "The candidate is proficient in Python, Java, and JavaScript...",
   "sources": [
-    {"page": 3, "snippet": "...relevant excerpt..."}
+    {"page": 1, "snippet": "...relevant excerpt..."}
   ]
 }
 ```
