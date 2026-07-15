@@ -30,7 +30,7 @@ class AskRequest(BaseModel):
     question: str = Field(min_length=1, max_length=100)
 
 class Source(BaseModel):
-    page: int
+    page: int | None
     snippet: str
 
 class AskResponse(BaseModel):
@@ -42,5 +42,9 @@ def ask(req: AskRequest) -> AskResponse:
     pipeline = state.get("pipeline")
     if pipeline is None:
         raise HTTPException(status_code=503, detail="pipeline is not initialized")
-    result = pipeline.ask(req.question)
+    try:
+        result = pipeline.ask(req.question)
+    except Exception as e:
+        logger.exception("Failed to answer question")
+        raise HTTPException(status_code=500, detail="Internal error")
     return AskResponse(**result)
