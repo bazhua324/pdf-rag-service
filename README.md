@@ -13,10 +13,9 @@ A minimal RAG (Retrieval-Augmented Generation) API that lets you ask questions a
 
 ```bash
 uv sync
-cp .env.example .env   # then add your GOOGLE_API_KEY
 ```
 
-`.env` file:
+Create a `.env` file in the project root:
 
 ```
 GOOGLE_API_KEY=your_key_here
@@ -24,16 +23,21 @@ GOOGLE_API_KEY=your_key_here
 
 ## Ingest a PDF
 
-```python
-from rag.pipeline import ingest_pdf
-
-ingest_pdf("path/to/document.pdf")
+```bash
+uv run python ingest.py path/to/document.pdf
 ```
 
 ## Run the server
 
 ```bash
 uv run uvicorn app:app --reload
+```
+
+## Run with Docker
+
+```bash
+docker build -t rag-service .
+docker run -p 8000:8000 --env-file .env -v ./chroma_db:/app/chroma_db rag-service
 ```
 
 ## API
